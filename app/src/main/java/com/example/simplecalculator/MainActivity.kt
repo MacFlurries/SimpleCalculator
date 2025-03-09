@@ -4,11 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.ColumnScopeInstance.weight
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -57,7 +57,9 @@ fun CalculatorApp() {
             fontSize = 24.sp,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(16.dp)
+                .align(Alignment.End)
+                .blur(radius = 2.dp),
             maxLines = 1
         )
 
@@ -107,7 +109,7 @@ fun CalculatorApp() {
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 CalculatorButton("0", onClick = { input += "0" })
-                CalculatorButton("C", onClick = { input = ""; result = "" })
+                CalculatorButton("C", onClick = { input = ""; result = "" }) // Clear
                 CalculatorButton("=", onClick = {
                     try {
                         result = evaluateExpression(input).toString()
@@ -116,6 +118,22 @@ fun CalculatorApp() {
                     }
                 })
                 CalculatorButton("+", onClick = { input += "+" })
+            }
+
+            // Row 5: DEL (Delete)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                CalculatorButton(
+                    "DEL",
+                    onClick = {
+                        if (input.isNotEmpty()) {
+                            input = input.dropLast(1) // Hapus satu karakter terakhir
+                        }
+                    },
+                    modifier = Modifier.weight(2f) // Lebar tombol DEL lebih besar
+                )
             }
         }
     }
@@ -130,8 +148,6 @@ fun CalculatorButton(
     Button(
         onClick = onClick,
         modifier = modifier
-            .weight(1f) // ✅ Correct usage of weight
-            .aspectRatio(1f) // Make the button square
     ) {
         Text(text = label, fontSize = 24.sp)
     }
